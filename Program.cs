@@ -39,6 +39,13 @@ var app = builder.Build();
 app.UseSwagger(c =>
 {
     c.SerializeAsV2 = true;
+    c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+    {
+        swaggerDoc.Servers = new List<OpenApiServer>
+        {
+            new OpenApiServer { Url = "https://yourdomain.com/api" }
+        };
+    });
 });
 app.UseSwaggerUI(c =>
 {
