@@ -36,7 +36,10 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // Enable Swagger UI in both Development and Production modes so Nintex can discover OpenAPI specs
-app.UseSwagger();
+app.UseSwagger(c =>
+{
+    c.SerializeAsV2 = true;
+});
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "KYC Nintex API v1");
