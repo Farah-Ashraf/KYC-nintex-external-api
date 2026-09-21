@@ -68,53 +68,6 @@ namespace KYCNintexApi.Controllers
             return Ok(resultList);
         }
 
-        /// <summary>
-        /// Retrieves customer documents by customerId query parameter (Nintex integration query endpoint).
-        /// </summary>
-        /// <param name="customerId">The unique Customer ID.</param>
-        [HttpGet("api/documents")]
-        [ProducesResponseType(typeof(IEnumerable<CustomerDocumentResponseDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<CustomerDocumentResponseDto>>> GetDocumentsByQuery([FromQuery] int customerId)
-        {
-            return await GetDocumentsByCustomerId(customerId);
-        }
-
-        /// <summary>
-        /// Retrieves a single document by DocumentID with Base64 encoded file content.
-        /// </summary>
-        /// <param name="documentId">The unique Document ID.</param>
-        [HttpGet("api/documents/{documentId:int}")]
-        [ProducesResponseType(typeof(CustomerDocumentResponseDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CustomerDocumentResponseDto>> GetDocumentById(int documentId)
-        {
-            var doc = await _context.CustomerDocuments
-                .AsNoTracking()
-                .FirstOrDefaultAsync(d => d.DocumentID == documentId);
-
-            if (doc == null)
-            {
-                return NotFound(new { message = $"Document with DocumentID {documentId} was not found." });
-            }
-
-            string base64Content = await GetFileContentAsBase64Async(doc.FilePath, doc.FileName);
-
-            var dto = new CustomerDocumentResponseDto
-            {
-                DocumentID = doc.DocumentID,
-                CustomerID = doc.CustomerID,
-                DocumentType = doc.DocumentType,
-                FileName = doc.FileName,
-                FilePath = doc.FilePath,
-                IssueDate = doc.IssueDate.ToString("yyyy-MM-dd"),
-                ExpiryDate = doc.ExpiryDate.ToString("yyyy-MM-dd"),
-                Status = doc.Status,
-                FileContentBase64 = base64Content
-            };
-
-            return Ok(dto);
-        }
 
         private async Task<string> GetFileContentAsBase64Async(string filePath, string fileName)
         {

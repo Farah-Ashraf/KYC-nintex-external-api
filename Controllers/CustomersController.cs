@@ -61,16 +61,5 @@ namespace KYCNintexApi.Controllers
             return Ok(dto);
         }
 
-        /// <summary>
-        /// Query customer details by customerId query parameter (Alternative convenience endpoint for Nintex).
-        /// </summary>
-        /// <param name="customerId">The unique Customer ID.</param>
-        [HttpGet]
-        [ProducesResponseType(typeof(CustomerResponseDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CustomerResponseDto>> GetCustomerByQuery([FromQuery] int customerId)
-        {
-            return await GetCustomerById(customerId);
-        }
     }
 }
