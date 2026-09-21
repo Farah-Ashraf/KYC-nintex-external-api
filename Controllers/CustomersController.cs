@@ -27,9 +27,9 @@ namespace KYCNintexApi.Controllers
         /// <response code="200">Returns customer details successfully.</response>
         /// <response code="404">If no customer is found with the provided ID.</response>
         [HttpGet("{id:int}")]
-        [ProducesResponseType(typeof(CustomerResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CustomerDataResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CustomerResponseDto>> GetCustomerById(int id)
+        public async Task<ActionResult<CustomerDataResponseDto>> GetCustomerById(int id)
         {
             _logger.LogInformation("Fetching customer info for CustomerID: {CustomerID}", id);
 
@@ -58,7 +58,7 @@ namespace KYCNintexApi.Controllers
                 LastUpdatedDate = customer.LastUpdatedDate
             };
 
-            return Ok(dto);
+            return Ok(new CustomerDataResponseDto { Customer = dto });
         }
 
     }
