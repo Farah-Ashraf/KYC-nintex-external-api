@@ -1,14 +1,28 @@
 using System.Text;
 using KYCNintexApi.Models;
 
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
+
 namespace KYCNintexApi.Data
 {
     public static class DbInitializer
     {
         public static void Initialize(KycDbContext context, IWebHostEnvironment env)
         {
-            // Ensure database and schema are created
-            context.Database.EnsureCreated();
+            // Ensure schema tables are created in existing PostgreSQL database (e.g. Supabase)
+            var databaseCreator = context.Database.GetService<IRelationalDatabaseCreator>();
+            if (databaseCreator != null)
+            {
+                try
+                {
+                    databaseCreator.CreateTables();
+                }
+                catch
+                {
+                    // Ignore if tables already exist
+                }
+            }
 
             // Prepare local storage path for sample attachments
             string storagePath = Path.Combine(env.ContentRootPath, "Storage");
