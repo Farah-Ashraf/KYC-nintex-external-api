@@ -1,0 +1,6 @@
+@KYCNintexApi_HostAddress = http://localhost:5285
+
+GET {{KYCNintexApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
