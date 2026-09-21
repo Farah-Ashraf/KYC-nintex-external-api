@@ -13,12 +13,6 @@
             <response code="200">Returns customer details successfully.</response>
             <response code="404">If no customer is found with the provided ID.</response>
         </member>
-        <member name="M:KYCNintexApi.Controllers.CustomersController.GetCustomerByQuery(System.Int32)">
-            <summary>
-            Query customer details by customerId query parameter (Alternative convenience endpoint for Nintex).
-            </summary>
-            <param name="customerId">The unique Customer ID.</param>
-        </member>
         <member name="M:KYCNintexApi.Controllers.DocumentsController.GetDocumentsByCustomerId(System.Int32)">
             <summary>
             Retrieves all documents for a specific customer by CustomerID, including Base64-encoded file binary content.
@@ -27,18 +21,6 @@
             <returns>List of document records with Base64 attachment strings.</returns>
             <response code="200">Returns customer documents successfully.</response>
             <response code="404">If the customer does not exist.</response>
-        </member>
-        <member name="M:KYCNintexApi.Controllers.DocumentsController.GetDocumentsByQuery(System.Int32)">
-            <summary>
-            Retrieves customer documents by customerId query parameter (Nintex integration query endpoint).
-            </summary>
-            <param name="customerId">The unique Customer ID.</param>
-        </member>
-        <member name="M:KYCNintexApi.Controllers.DocumentsController.GetDocumentById(System.Int32)">
-            <summary>
-            Retrieves a single document by DocumentID with Base64 encoded file content.
-            </summary>
-            <param name="documentId">The unique Document ID.</param>
         </member>
         <member name="P:KYCNintexApi.Dtos.CustomerDocumentResponseDto.FileContentBase64">
             <summary>
