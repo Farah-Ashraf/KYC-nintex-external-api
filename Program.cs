@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using KYCNintexApi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +25,9 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API endpoints for fetching Customer details and Customer Documents with Base64 encoded attachments for Nintex workflows."
     });
 
+    // Remove additionalProperties: false from generated schemas
+    c.SchemaFilter<RemoveAdditionalPropertiesSchemaFilter>();
+
     // Include XML Documentation for Swagger / Nintex field mapping
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -43,7 +47,7 @@ app.UseSwagger(c =>
     {
         swaggerDoc.Servers = new List<OpenApiServer>
         {
-            new OpenApiServer { Url = "https://yourdomain.com/api" }
+            new OpenApiServer { Url = "https://kyc.runasp.net/api" }
         };
     });
 });
@@ -77,3 +81,11 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+public class RemoveAdditionalPropertiesSchemaFilter : ISchemaFilter
+{
+    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    {
+        schema.AdditionalPropertiesAllowed = true;
+    }
+}

@@ -6,7 +6,7 @@ using KYCNintexApi.Dtos;
 namespace KYCNintexApi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Produces("application/json")]
     public class CustomersController : ControllerBase
     {

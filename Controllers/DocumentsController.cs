@@ -26,7 +26,7 @@ namespace KYCNintexApi.Controllers
         /// <returns>List of document records with Base64 attachment strings.</returns>
         /// <response code="200">Returns customer documents successfully.</response>
         /// <response code="404">If the customer does not exist.</response>
-        [HttpGet("api/customers/{customerId:int}/documents")]
+        [HttpGet("customers/{customerId:int}/documents")]
         [ProducesResponseType(typeof(IEnumerable<CustomerDocumentResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<CustomerDocumentResponseDto>>> GetDocumentsByCustomerId(int customerId)
