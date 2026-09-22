@@ -27,9 +27,9 @@ namespace KYCNintexApi.Controllers
         /// <response code="200">Returns customer documents successfully.</response>
         /// <response code="404">If the customer does not exist.</response>
         [HttpGet("api/customers/{customerId:int}/documents")]
-        [ProducesResponseType(typeof(CustomerDocumentListResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<CustomerDocumentResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CustomerDocumentListResponseDto>> GetDocumentsByCustomerId(int customerId)
+        public async Task<ActionResult<IEnumerable<CustomerDocumentResponseDto>>> GetDocumentsByCustomerId(int customerId)
         {
             _logger.LogInformation("Fetching documents for CustomerID: {CustomerID}", customerId);
 
@@ -65,7 +65,7 @@ namespace KYCNintexApi.Controllers
                 });
             }
 
-            return Ok(new CustomerDocumentListResponseDto { Documents = resultList });
+            return Ok(resultList);
         }
 
 
