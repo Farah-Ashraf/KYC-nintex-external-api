@@ -106,3 +106,4 @@ C:\Users\FarahAshraf\OneDrive - ICT Misr\Desktop\KYC-nintex-apis\obj\Debug\net8.
 C:\Users\FarahAshraf\OneDrive - ICT Misr\Desktop\KYC-nintex-apis\obj\Debug\net8.0\KYCNintexApi.genruntimeconfig.cache
 C:\Users\FarahAshraf\OneDrive - ICT Misr\Desktop\KYC-nintex-apis\obj\Debug\net8.0\ref\KYCNintexApi.dll
 C:\Users\FarahAshraf\OneDrive - ICT Misr\Desktop\KYC-nintex-apis\obj\Debug\net8.0\KYCNintexApi.sourcelink.json
+C:\Users\FarahAshraf\OneDrive - ICT Misr\Desktop\KYC-nintex-apis\bin\Debug\net8.0\swagger.json

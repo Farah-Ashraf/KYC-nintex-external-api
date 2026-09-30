@@ -1,6 +1,7 @@
 using System.Text;
 using KYCNintexApi.Models;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -23,6 +24,8 @@ namespace KYCNintexApi.Data
                     // Ignore if tables already exist
                 }
             }
+
+            MigrateLegacyFilePaths(context);
 
             // Prepare local storage path for sample attachments
             string storagePath = Path.Combine(env.ContentRootPath, "Storage");
@@ -102,7 +105,7 @@ namespace KYCNintexApi.Data
                         CustomerID = cust1Id,
                         DocumentType = "National ID",
                         FileName = "Ahmed_Ali_NationalID.pdf",
-                        FilePath = nationalId1Path,
+                        FileContent = File.ReadAllBytes(nationalId1Path),
                         IssueDate = new DateTime(2021, 1, 10, 0, 0, 0, DateTimeKind.Utc),
                         ExpiryDate = new DateTime(2028, 1, 10, 0, 0, 0, DateTimeKind.Utc),
                         Status = "Verified"
@@ -112,7 +115,7 @@ namespace KYCNintexApi.Data
                         CustomerID = cust1Id,
                         DocumentType = "Passport",
                         FileName = "Ahmed_Ali_Passport.pdf",
-                        FilePath = passport1Path,
+                        FileContent = File.ReadAllBytes(passport1Path),
                         IssueDate = new DateTime(2022, 6, 15, 0, 0, 0, DateTimeKind.Utc),
                         ExpiryDate = new DateTime(2032, 6, 15, 0, 0, 0, DateTimeKind.Utc),
                         Status = "Verified"
@@ -122,7 +125,7 @@ namespace KYCNintexApi.Data
                         CustomerID = cust1Id,
                         DocumentType = "Utility Bill",
                         FileName = "Ahmed_Ali_UtilityBill.pdf",
-                        FilePath = utilityBill1Path,
+                        FileContent = File.ReadAllBytes(utilityBill1Path),
                         IssueDate = new DateTime(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc),
                         ExpiryDate = new DateTime(2025, 11, 1, 0, 0, 0, DateTimeKind.Utc),
                         Status = "Verified"
@@ -132,7 +135,7 @@ namespace KYCNintexApi.Data
                         CustomerID = cust2Id,
                         DocumentType = "National ID",
                         FileName = "Sara_Hassan_NationalID.pdf",
-                        FilePath = nationalId2Path,
+                        FileContent = File.ReadAllBytes(nationalId2Path),
                         IssueDate = new DateTime(2020, 3, 12, 0, 0, 0, DateTimeKind.Utc),
                         ExpiryDate = new DateTime(2027, 3, 12, 0, 0, 0, DateTimeKind.Utc),
                         Status = "Pending Verification"
@@ -150,6 +153,91 @@ namespace KYCNintexApi.Data
             {
                 byte[] bytes = Encoding.UTF8.GetBytes(textContent + "\n" + Guid.NewGuid().ToString("N"));
                 File.WriteAllBytes(filePath, bytes);
+            }
+        }
+
+        private static void MigrateLegacyFilePaths(KycDbContext context)
+        {
+            using var connection = context.Database.GetDbConnection();
+            if (connection.State != System.Data.ConnectionState.Open)
+            {
+                connection.Open();
+            }
+
+            using var columnCommand = connection.CreateCommand();
+            columnCommand.CommandText = """
+                SELECT column_name
+                FROM information_schema.columns
+                WHERE table_schema = current_schema()
+                  AND table_name = 'CustomerDocuments'
+                  AND column_name IN ('FilePath', 'FileContent')
+                """;
+
+            var columns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            using (var reader = columnCommand.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    columns.Add(reader.GetString(0));
+                }
+            }
+
+            if (!columns.Contains("FileContent"))
+            {
+                using var addColumnCommand = connection.CreateCommand();
+                addColumnCommand.CommandText = "ALTER TABLE \"CustomerDocuments\" ADD COLUMN \"FileContent\" bytea";
+                addColumnCommand.ExecuteNonQuery();
+                columns.Add("FileContent");
+            }
+
+            if (columns.Contains("FilePath"))
+            {
+                using var legacyCommand = connection.CreateCommand();
+                legacyCommand.CommandText = "SELECT \"DocumentID\", \"FilePath\" FROM \"CustomerDocuments\" WHERE \"FileContent\" IS NULL";
+
+                var legacyDocuments = new List<(int DocumentId, string FilePath)>();
+                using (var reader = legacyCommand.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (!reader.IsDBNull(1))
+                        {
+                            legacyDocuments.Add((reader.GetInt32(0), reader.GetString(1)));
+                        }
+                    }
+                }
+
+                bool allDocumentsMigrated = true;
+                foreach (var document in legacyDocuments)
+                {
+                    if (!File.Exists(document.FilePath))
+                    {
+                        allDocumentsMigrated = false;
+                        continue;
+                    }
+
+                    using var updateCommand = connection.CreateCommand();
+                    updateCommand.CommandText = "UPDATE \"CustomerDocuments\" SET \"FileContent\" = @content WHERE \"DocumentID\" = @documentId";
+
+                    var contentParameter = updateCommand.CreateParameter();
+                    contentParameter.ParameterName = "@content";
+                    contentParameter.Value = File.ReadAllBytes(document.FilePath);
+                    updateCommand.Parameters.Add(contentParameter);
+
+                    var documentIdParameter = updateCommand.CreateParameter();
+                    documentIdParameter.ParameterName = "@documentId";
+                    documentIdParameter.Value = document.DocumentId;
+                    updateCommand.Parameters.Add(documentIdParameter);
+
+                    updateCommand.ExecuteNonQuery();
+                }
+
+                if (allDocumentsMigrated)
+                {
+                    using var dropColumnCommand = connection.CreateCommand();
+                    dropColumnCommand.CommandText = "ALTER TABLE \"CustomerDocuments\" DROP COLUMN \"FilePath\"";
+                    dropColumnCommand.ExecuteNonQuery();
+                }
             }
         }
     }

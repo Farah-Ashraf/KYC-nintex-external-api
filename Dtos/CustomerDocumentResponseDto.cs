@@ -6,7 +6,6 @@ namespace KYCNintexApi.Dtos
         public int CustomerID { get; set; }
         public string DocumentType { get; set; } = string.Empty;
         public string FileName { get; set; } = string.Empty;
-        public string FilePath { get; set; } = string.Empty;
         public string IssueDate { get; set; } = string.Empty;
         public string ExpiryDate { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;

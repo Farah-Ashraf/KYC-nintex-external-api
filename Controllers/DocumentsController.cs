@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using KYCNintexApi.Data;
 using KYCNintexApi.Dtos;
-using System.Text;
 
 namespace KYCNintexApi.Controllers
 {
@@ -49,44 +48,20 @@ namespace KYCNintexApi.Controllers
 
             foreach (var doc in documents)
             {
-                string base64Content = await GetFileContentAsBase64Async(doc.FilePath, doc.FileName);
-
                 resultList.Add(new CustomerDocumentResponseDto
                 {
                     DocumentID = doc.DocumentID,
                     CustomerID = doc.CustomerID,
                     DocumentType = doc.DocumentType,
                     FileName = doc.FileName,
-                    FilePath = doc.FilePath,
                     IssueDate = doc.IssueDate.ToString("yyyy-MM-dd"),
                     ExpiryDate = doc.ExpiryDate.ToString("yyyy-MM-dd"),
                     Status = doc.Status,
-                    FileContentBase64 = base64Content
+                    FileContentBase64 = Convert.ToBase64String(doc.FileContent)
                 });
             }
 
             return Ok(resultList);
-        }
-
-
-        private async Task<string> GetFileContentAsBase64Async(string filePath, string fileName)
-        {
-            try
-            {
-                if (!string.IsNullOrWhiteSpace(filePath) && System.IO.File.Exists(filePath))
-                {
-                    byte[] bytes = await System.IO.File.ReadAllBytesAsync(filePath);
-                    return Convert.ToBase64String(bytes);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error reading file from path: {FilePath}", filePath);
-            }
-
-            // Fallback content if file path does not exist on disk
-            byte[] fallbackBytes = Encoding.UTF8.GetBytes($"[ATTACHMENT DATA FOR {fileName}]");
-            return Convert.ToBase64String(fallbackBytes);
         }
     }
 }

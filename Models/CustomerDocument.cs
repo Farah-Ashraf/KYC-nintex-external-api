@@ -26,8 +26,8 @@ namespace KYCNintexApi.Models
         public string FileName { get; set; } = string.Empty;
 
         [Required]
-        [Column("FilePath")]
-        public string FilePath { get; set; } = string.Empty;
+        [Column("FileContent", TypeName = "bytea")]
+        public byte[] FileContent { get; set; } = Array.Empty<byte>();
 
         [Column("IssueDate", TypeName = "date")]
         public DateTime IssueDate { get; set; }
