@@ -13,6 +13,14 @@
             <response code="200">Returns customer details successfully.</response>
             <response code="404">If no customer is found with the provided ID.</response>
         </member>
+        <member name="M:KYCNintexApi.Controllers.CustomersController.CreateCustomer(KYCNintexApi.Dtos.CreateCustomerRequestDto)">
+            <summary>
+            Creates a customer and stores uploaded documents in the database.
+            </summary>
+            <param name="request">Customer fields and document files submitted as multipart/form-data.</param>
+            <response code="201">The customer and documents were created successfully.</response>
+            <response code="400">The request is invalid or contains no documents.</response>
+        </member>
         <member name="M:KYCNintexApi.Controllers.DocumentsController.GetDocumentsByCustomerId(System.Int32)">
             <summary>
             Retrieves all documents for a specific customer by CustomerID, including Base64-encoded file binary content.
