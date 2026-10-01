@@ -238,6 +238,12 @@ namespace KYCNintexApi.Data
                     dropColumnCommand.CommandText = "ALTER TABLE \"CustomerDocuments\" DROP COLUMN \"FilePath\"";
                     dropColumnCommand.ExecuteNonQuery();
                 }
+                else
+                {
+                    using var nullableColumnCommand = connection.CreateCommand();
+                    nullableColumnCommand.CommandText = "ALTER TABLE \"CustomerDocuments\" ALTER COLUMN \"FilePath\" DROP NOT NULL";
+                    nullableColumnCommand.ExecuteNonQuery();
+                }
             }
         }
     }

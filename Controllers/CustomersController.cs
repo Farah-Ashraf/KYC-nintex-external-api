@@ -212,7 +212,7 @@ namespace KYCNintexApi.Controllers
                 IssueDate = document.IssueDate.ToString("yyyy-MM-dd"),
                 ExpiryDate = document.ExpiryDate.ToString("yyyy-MM-dd"),
                 Status = document.Status,
-                FileContentBase64 = Convert.ToBase64String(document.FileContent)
+                FileContentBase64 = Convert.ToBase64String(document.FileContent ?? Array.Empty<byte>())
             };
         }
 
