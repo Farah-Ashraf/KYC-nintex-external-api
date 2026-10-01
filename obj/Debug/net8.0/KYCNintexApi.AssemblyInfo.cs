@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("KYCNintexApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8b26defbf912aa6da935156a64f089d44627d8db")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a40646443467dd73dda95a6e37f5bb9e25c72a47")]
 [assembly: System.Reflection.AssemblyProductAttribute("KYCNintexApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KYCNintexApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

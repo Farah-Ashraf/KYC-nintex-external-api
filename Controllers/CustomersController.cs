@@ -74,27 +74,29 @@ namespace KYCNintexApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CreateCustomerResponseDto>> CreateCustomer([FromForm] CreateCustomerRequestDto request)
         {
+            var uploadedFiles = Request.Form.Files;
+
             if (string.IsNullOrWhiteSpace(request.FullName))
             {
                 ModelState.AddModelError(nameof(request.FullName), "FullName is required.");
             }
 
-            if (request.Documents.Count == 0)
+            if (uploadedFiles.Count == 0)
             {
                 ModelState.AddModelError(nameof(request.Documents), "At least one document is required.");
             }
 
-            if (request.DocumentTypes.Count > 0 && request.DocumentTypes.Count != request.Documents.Count)
+            if (request.DocumentTypes.Count > 0 && request.DocumentTypes.Count != uploadedFiles.Count)
             {
                 ModelState.AddModelError(nameof(request.DocumentTypes), "Provide one DocumentTypes value for each document.");
             }
 
-            if (request.IssueDates.Count > 0 && request.IssueDates.Count != request.Documents.Count)
+            if (request.IssueDates.Count > 0 && request.IssueDates.Count != uploadedFiles.Count)
             {
                 ModelState.AddModelError(nameof(request.IssueDates), "Provide one IssueDates value for each document.");
             }
 
-            if (request.ExpiryDates.Count > 0 && request.ExpiryDates.Count != request.Documents.Count)
+            if (request.ExpiryDates.Count > 0 && request.ExpiryDates.Count != uploadedFiles.Count)
             {
                 ModelState.AddModelError(nameof(request.ExpiryDates), "Provide one ExpiryDates value for each document.");
             }
@@ -124,9 +126,9 @@ namespace KYCNintexApi.Controllers
             await _context.SaveChangesAsync();
 
             var documents = new List<CustomerDocument>();
-            for (int index = 0; index < request.Documents.Count; index++)
+            for (int index = 0; index < uploadedFiles.Count; index++)
             {
-                var uploadedFile = request.Documents[index];
+                var uploadedFile = uploadedFiles[index];
                 if (uploadedFile.Length == 0)
                 {
                     ModelState.AddModelError($"Documents[{index}]", "The document file cannot be empty.");

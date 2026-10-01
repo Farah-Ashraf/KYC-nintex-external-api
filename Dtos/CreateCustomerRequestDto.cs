@@ -12,7 +12,7 @@ namespace KYCNintexApi.Dtos
         public string Email { get; set; } = string.Empty;
         public string Branch { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
-        public List<IFormFile> Documents { get; set; } = new();
+        public IFormFile? Documents { get; set; }
         public List<string> DocumentTypes { get; set; } = new();
         public List<DateTime?> IssueDates { get; set; } = new();
         public List<DateTime?> ExpiryDates { get; set; } = new();
